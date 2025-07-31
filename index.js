@@ -116,20 +116,41 @@ app.get("/wishlist/add", requireAuth, (req, res) => {
 app.post("/wishlist/add", requireAuth, async (req, res) => {
   const title = req.body.title_input;
   const dateAdded = req.body.date_added;
+  const manualAuthor = req.body.author_input?.trim();
 
   let cover_url = null;
-  let author = null;
+  let author = manualAuthor || null;
 
   try {
-    const response = await axios.get(`${API_URL}${encodeURIComponent(title)}`);
-    const bookData = response.data.docs[0];
+    const query = manualAuthor
+      ? `${title} ${manualAuthor}`
+      : title;
+
+    const response = await axios.get(`${API_URL}${encodeURIComponent(query)}`);
+    const docs = response.data.docs;
+
+    let bookData = null;
+
+    // Look for the first result with a cover
+    for (let doc of docs) {
+      if (doc.cover_i) {
+        bookData = doc;
+        break;
+      }
+    }
+
+    // If no book has a cover, just use the first result (if any)
+    if (!bookData && docs.length > 0) {
+      bookData = docs[0];
+    }
 
     if (bookData) {
+      if (!author && bookData.author_name && bookData.author_name.length > 0) {
+        author = bookData.author_name[0];
+      }
+
       if (bookData.cover_i) {
         cover_url = `https://covers.openlibrary.org/b/id/${bookData.cover_i}-M.jpg`;
-      }
-      if (bookData.author_name && bookData.author_name.length > 0) {
-        author = bookData.author_name[0];
       }
     }
 
@@ -164,25 +185,44 @@ app.post("/add", requireAuth, async (req, res) => {
   const rating = req.body.rating;
   const date = req.body.date_read;
   const notes = req.body.notes;
+  const manualAuthor = req.body.author_input?.trim();
 
   let cover_url = null;
-  let author = null;
+  let author = manualAuthor || null;
 
   try {
-    // Fetch cover and author info from Open Library
-    const response = await axios.get(`${API_URL}${encodeURIComponent(title)}`);
-    const bookData = response.data.docs[0];
+    const query = manualAuthor
+      ? `${title} ${manualAuthor}`
+      : title;
 
-    if (bookData) {
-      if (bookData.cover_i) {
-        cover_url = `https://covers.openlibrary.org/b/id/${bookData.cover_i}-M.jpg`;
-      }
-      if (bookData.author_name && bookData.author_name.length > 0) {
-        author = bookData.author_name[0];
+    const response = await axios.get(`${API_URL}${encodeURIComponent(query)}`);
+    const docs = response.data.docs;
+
+    let bookData = null;
+
+    // Look for the first result with a cover
+    for (let doc of docs) {
+      if (doc.cover_i) {
+        bookData = doc;
+        break;
       }
     }
 
-    // Insert all fields into database
+    // If no book has a cover, fall back to first result
+    if (!bookData && docs.length > 0) {
+      bookData = docs[0];
+    }
+
+    if (bookData) {
+      if (!author && bookData.author_name && bookData.author_name.length > 0) {
+        author = bookData.author_name[0];
+      }
+
+      if (bookData.cover_i) {
+        cover_url = `https://covers.openlibrary.org/b/id/${bookData.cover_i}-M.jpg`;
+      }
+    }
+
     await db.query(
       "INSERT INTO books (title, author, rating, date_read, notes, cover_url) VALUES ($1, $2, $3, $4, $5, $6)",
       [title, author, rating, date, notes, cover_url]
@@ -194,6 +234,7 @@ app.post("/add", requireAuth, async (req, res) => {
     res.status(500).send("Error adding book.");
   }
 });
+
 
 
 app.post("/delete", requireAuth, async (req, res) => {
