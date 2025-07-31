@@ -11,14 +11,18 @@
   </p>
 
   <div class="auth-links">
-  <% if (!session.loggedIn) { %>
-    <a href="/login" class="btn btn-login">🔐 Login</a>
-  <% } else { %>
-    <form action="/logout" method="POST" style="display:inline;">
-      <button type="submit" class="btn btn-logout">🚪 Logout</button>
-    </form>
-  <% } %>
+    <a href="/wishlist" class="btn btn-secondary">📚 Wishlist</a>
+
+    <% if (!session.authenticated) { %>
+      <a href="/login?redirect=/" class="btn btn-login">🔐 Login</a>
+    <% } else { %>
+      <form action="/logout" method="POST" style="display:inline;">
+        <input type="hidden" name="redirect" value="<%= request.originalUrl %>">
+        <button type="submit" class="btn btn-logout">🚪 Logout</button>
+      </form>
+    <% } %>
   </div>
+
 
   <div class="add-button">
     <% if (session.authenticated) { %>

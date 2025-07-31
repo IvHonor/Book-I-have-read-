@@ -111,7 +111,7 @@ p {
 }
 
 .btn-edit {
-  background-color: #28a745;
+  color: black;
 }
 .btn-edit:hover {
   background-color: #218838;
@@ -131,7 +131,8 @@ p {
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-bottom: 30px; 
   display: flex;
   flex-direction: column;
   position: relative;
@@ -206,6 +207,7 @@ p {
   flex: 1;
   position: relative;
   min-width: 0;
+  font-weight: bold;
 }
 
 #cover-preview {
@@ -378,3 +380,53 @@ p {
   font-weight: bold;
   text-align: center;
 }
+
+.auth-links {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.btn-login, .btn-logout, .btn-secondary {
+  font-size: 0.9rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  color: white;
+  background-color: #444;
+  transition: background-color 0.2s ease;
+}
+
+.btn-login:hover,
+.btn-logout:hover,
+.btn-secondary:hover {
+  background-color: #222;
+}
+
+.book-entry.read {
+  opacity: 0.5;
+}
+
+
+.cover-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.read-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: rgba(68, 68, 68, 0.85);
+  color: white;
+  font-weight: bold;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
