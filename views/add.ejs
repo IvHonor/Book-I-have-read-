@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/header") %>
+<body>
+  <h1>Add a New Book</h1>
+
+  <form action="/add" method="POST" class="add-book-form">
+    <div class="form-group">
+      <label for="title_input">📖 Book Title:</label>
+      <div class="title-preview-wrapper">
+        <div class="title-input-container">
+          <input type="text" id="title_input" name="title_input" autocomplete="off" required>
+          <ul id="suggestions"></ul>
+        </div>
+        <div id="cover-preview">
+          <img id="cover_image" src="" alt="Cover Preview">
+        </div>
+      </div>
+    </div>
+
+
+    <div class="form-group">
+      <label for="rating">⭐ Rating (1–10):</label>
+      <input type="number" name="rating" min="1" max="10" required>
+    </div>
+
+    <div class="form-group">
+      <label for="date_read">📅 Date Read:</label>
+      <input type="date" name="date_read" required>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">📝 Notes:</label>
+      <textarea name="notes" rows="6"></textarea>
+    </div>
+
+    <button type="submit">➕ Add Book</button>
+  </form>
+
+  <div class="back-link">
+    <a href="/">← Back to Home</a>
+  </div>
+
+  <script src="/scripts/add-book.js"></script>
+</body>
+</html>

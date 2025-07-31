@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/header") %>
+<body>
+  <div class="login-container">
+    <h1>🔐 Login</h1>
+    <p>Please enter your password to access editing features.</p>
+
+    <% if (error) { %>
+      <div class="login-error"><%= error %></div>
+    <% } %>
+
+    <form action="/login" method="POST" class="login-form">
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="back-link">
+      <a href="/">← Back to Home</a>
+    </div>
+  </div>
+</body>
+</html>
+

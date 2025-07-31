@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include("partials/header") %>
+<body>
+  <h1>DANIAL RAHMANI</h1>
+
+  <h2>Books I've Read</h2>
+  <p>
+    This is a summary of the books I have read alongside the key notes and concepts I have learnt from each book.
+    This page will constantly update as I read more.
+  </p>
+
+  <div class="auth-links">
+  <% if (!session.loggedIn) { %>
+    <a href="/login" class="btn btn-login">🔐 Login</a>
+  <% } else { %>
+    <form action="/logout" method="POST" style="display:inline;">
+      <button type="submit" class="btn btn-logout">🚪 Logout</button>
+    </form>
+  <% } %>
+  </div>
+
+  <div class="add-button">
+    <% if (session.authenticated) { %>
+      <a href="/add">➕ Add a New Book</a>
+    <% } %>
+  </div>
+
+  <hr>
+
+  <% if (books.length === 0) { %>
+    <p style="margin-top: 30px; font-style: italic; color: #777;">
+      You haven’t read any books yet.
+    </p>
+  <% } else { %>
+    <% books.forEach(book => { %>
+      <div class="book-entry">
+        <% if (book.cover_url) { %>
+          <img src="<%= book.cover_url %>" alt="Cover of <%= book.title %>" class="cover-image">
+        <% } %>
+
+        <div class="book-content">
+          <h3 class="book-title">
+            <a href="#"><%= book.title %><% if (book.author) { %> - by <%= book.author %><% } %></a>
+          </h3>
+
+          <%
+            const rawDate = new Date(book.date_read);
+            const day = String(rawDate.getDate()).padStart(2, '0');
+            const month = String(rawDate.getMonth() + 1).padStart(2, '0');
+            const year = rawDate.getFullYear();
+            const formattedDate = `${day}-${month}-${year}`;
+          %>
+
+          <p class="book-meta">
+            📅 Date Read: <%= formattedDate %><br>
+            ⭐ How strongly I recommend it: <%= book.rating %>/10
+          </p>
+
+          <div class="book-actions">
+            <% if (session.authenticated) { %>
+              <a href="/edit/<%= book.id %>" class="btn btn-edit">✏️ Edit</a>
+              <form action="/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this book?');" style="display:inline;">
+                <input type="hidden" name="id" value="<%= book.id %>">
+                <button type="submit" class="btn btn-delete">🗑 Delete</button>
+              </form>
+            <% } %>
+          </div>
+
+          <div class="book-notes-container">
+            <div class="book-notes collapsed" id="notes-<%= book.id %>">
+              <%- book.notes.replace(/\n/g, '<br>') %>
+            </div>
+            <button class="toggle-notes-btn" data-id="<%= book.id %>">Read More</button>
+          </div>
+
+        </div>
+      </div>
+      <hr>
+    <% }) %>
+  <% } %>
+</body>
+<script>
+  document.querySelectorAll('.toggle-notes-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const id = this.getAttribute('data-id');
+      const notes = document.getElementById('notes-' + id);
+      if (!notes) return;
+
+      if (notes.classList.contains('expanded')) {
+        notes.classList.remove('expanded');
+        notes.classList.add('collapsed');
+        this.textContent = 'Read More';
+      } else {
+        notes.classList.remove('collapsed');
+        notes.classList.add('expanded');
+        this.textContent = 'Read Less';
+      }
+    });
+  });
+</script>
+
+</html>
